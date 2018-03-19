@@ -1,0 +1,57 @@
+<html>
+<head>
+</head>
+<body>
+<h2>Welcome! Enter Any three words, then press enter to continue the story</h2> 
+<br>
+<br>
+<br>
+
+<form>
+  <input id="word1" type="text" name="word1">
+  <input id="word2" type="text" name="word2">
+  <input id="word3" type="text" name="word3">
+</form>
+
+<button onclick="updateStory()">Click me</button>
+
+<br> 
+<br> 
+<br>
+
+<p id="story"></p>
+
+<script>
+
+function updateStory() {
+	
+  var story = document.getElementById("story").innerHTML;
+  var word1 = document.getElementById('word1').value;
+	var word2 = document.getElementById('word2').value;
+	var word3 = document.getElementById('word3').value; 
+  
+  var n1 = word1.includes(" ")
+  var n2 = word2.includes(" ")
+  var n3 = word3.includes(" ")
+  
+  if(n1 == true || n2 == true || n3 == true) {
+  	alert("Only one word per text box! you big dum idiote xd");
+  }
+  
+  else if(word1.length>=15 || word2.length>=15 || word3.length>=15) {
+  	alert("No words longer than 15 characters! you big dum idiote xd");
+  }
+  
+  else {
+		var word1 = document.getElementById('word1').value + " ";
+		var word2 = document.getElementById('word2').value + " ";
+		var word3 = document.getElementById('word3').value + " ";
+		console.log("test");
+  
+  	document.getElementById("story").innerHTML = story+word1+word2+word3;  
+  }
+
+}
+</script>
+</body>
+</html>
