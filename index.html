@@ -115,6 +115,7 @@ function readStory(){
 
 function clearStory() {
 	var nothin = "";
+  document.getElementById("lastThingTyped").innerHTML = "";
 	firebase.database().ref().set({
 		story: nothin
   });
