@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<center><h1>Welcome! Enter Any three words, then press enter to continue the story</h1> 
+<center><h1>Welcome! Enter up to three words, then press "Add To Story" to continue the story!</h1> 
 <br>
 <br>
 <br>
@@ -11,21 +11,51 @@
   <input id="word3" type="text" name="word3">
 </form>
 
-<button onclick="updateStory()">Click me</button>
+<button onclick="updateStory()">Add To Story</button>
 	
 	</center>
 
 <br> 
-<br> 
-<br>
 
 <p id="story"></p>
 
+<br>
+<center>
+<button onclick="clearStory()">Clear Story</button>
+</center>
+<p hidden id="test">
+</p>
+
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
 <script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAe_Y3RxB_h75PcD2Dz5KJ-GfZ_XysOgYI",
+    authDomain: "three-word-game.firebaseapp.com",
+    databaseURL: "https://three-word-game.firebaseio.com",
+    projectId: "three-word-game",
+    storageBucket: "gs://three-word-game.appspot.com",
+    messagingSenderId: "4222397042"
+  };
+  firebase.initializeApp(config);
+
+var database = firebase.database();
+var ref = firebase.database().ref('story');
+
+var userId = Math.floor(Math.random() * 100000000001);
+document.getElementById("test").innerHTML = userId;
+
+readStory();
 
 function updateStory() {
-	
-  var story = document.getElementById("story").innerHTML;
+
+	var userId = document.getElementById("test").innerHTML
+  
+  var addToStory;
+  var oldStory = document.getElementById("story").innerHTML;
+  
+  console.log(oldStory);
+  
   var word1 = document.getElementById('word1').value;
 	var word2 = document.getElementById('word2').value;
 	var word3 = document.getElementById('word3').value; 
@@ -34,23 +64,65 @@ function updateStory() {
   var n2 = word2.includes(" ")
   var n3 = word3.includes(" ")
   
+  var code1 = word1.includes("<");
+  var code2 = word2.includes("<");
+  var code3 = word2.includes("<");
+  
   if(n1 == true || n2 == true || n3 == true) {
-  	alert("Only one word per text box! you big dum idiote xd");
+  	alert("Only one word per text box!");
+  }
+  
+  else if(code1 == true || code2 == true || code3 == true) {
+  	alert("No HTML injecting!");
   }
   
   else if(word1.length>=15 || word2.length>=15 || word3.length>=15) {
-  	alert("No words longer than 15 characters! you big dum idiote xd");
+  	alert("No words longer than 15 characters!");
   }
   
   else {
-		var word1 = document.getElementById('word1').value + " ";
-		var word2 = document.getElementById('word2').value + " ";
-		var word3 = document.getElementById('word3').value + " ";
-		console.log("test");
+		var word1 = word1 + " ";
+		var word2 = word2 + " ";
+		var word3 = word3 + " ";
+    addToStory = word1+word2+word3;
   
-  	document.getElementById("story").innerHTML = story+word1+word2+word3;  
+
+    document.getElementById("word1").value = "";
+    document.getElementById("word2").value = "";
+    document.getElementById("word3").value = "";
+    
+    writeStory(addToStory, oldStory);
+
+    readStory();
+    
   }
+}
+
+function writeStory(addToStory, oldStory) {
+  firebase.database().ref().set({
+		story:oldStory+addToStory
+  });
+}
+
+function readStory(){
+  
+  var pleaseWork;
+  
+		ref.on("value", function(snapshot) {
+ 	  	pleaseWork = snapshot.val();
+      document.getElementById("story").innerHTML = pleaseWork;
+		});  
+}
+
+function clearStory() {
+	var nothin = "";
+	firebase.database().ref().set({
+		story: nothin
+  });
 
 }
+
+
 </script>
 </html>
+
