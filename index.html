@@ -23,9 +23,8 @@
 <center>
 <button onclick="clearStory()">Clear Story</button>
 </center>
-<p hidden id="test">
+<p hidden id="lastThingTyped">
 </p>
-
 <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
 <script>
   // Initialize Firebase
@@ -42,19 +41,13 @@
 var database = firebase.database();
 var ref = firebase.database().ref('story');
 
-var userId = Math.floor(Math.random() * 100000000001);
-document.getElementById("test").innerHTML = userId;
-
 readStory();
 
 function updateStory() {
-
-	var userId = document.getElementById("test").innerHTML
   
+  var lastThingTyped = document.getElementById("lastThingTyped").innerHTML;
   var addToStory;
   var oldStory = document.getElementById("story").innerHTML;
-  
-  console.log(oldStory);
   
   var word1 = document.getElementById('word1').value;
 	var word2 = document.getElementById('word2').value;
@@ -80,12 +73,18 @@ function updateStory() {
   	alert("No words longer than 15 characters!");
   }
   
+  else if(oldStory.endsWith(lastThingTyped)) {
+  	alert("Wait your turn!")
+  }
+  
   else {
+  
 		var word1 = word1 + " ";
 		var word2 = word2 + " ";
 		var word3 = word3 + " ";
     addToStory = word1+word2+word3;
   
+  	document.getElementById("lastThingTyped").innerHTML = addToStory;
 
     document.getElementById("word1").value = "";
     document.getElementById("word2").value = "";
