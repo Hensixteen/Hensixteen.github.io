@@ -67,23 +67,19 @@ function updateStory() {
 	var word2 = document.getElementById('word2').value;
 	var word3 = document.getElementById('word3').value; 
   
-  var n1 = word1.includes(" ")
-  var n2 = word2.includes(" ")
-  var n3 = word3.includes(" ")
+  var multipleWords = word1.includes(" ") || word2.includes(" ") || word3.includes(" ");
+  var htmlInject = word1.includes("<") || word2.includes("<") || word3.includes("<");
+  var tooLong = word1.length>=15 || word2.length>=15 || word3.length>=15;
   
-  var code1 = word1.includes("<");
-  var code2 = word2.includes("<");
-  var code3 = word2.includes("<");
-  
-  if(n1 == true || n2 == true || n3 == true) {
+  if(multipleWords == true) {
   	alert("Only one word per text box!");
   }
   
-  else if(code1 == true || code2 == true || code3 == true) {
+  else if(htmlInject == true) {
   	alert("No HTML injecting!");
   }
   
-  else if(word1.length>=15 || word2.length>=15 || word3.length>=15) {
+  else if(tooLong == true) {
   	alert("No words longer than 15 characters!");
   }
   
@@ -148,10 +144,10 @@ function readStory(){
 
 function clearStory() {
 	var nothin = "";
-	firebase.database().ref().set({
+	firebase.database().ref('storyTab').set({
 		story: nothin
   });
-  firebase.database().ref().set({
+  firebase.database().ref('lastPerson').set({
 		last: nothin
   });
 
@@ -160,4 +156,3 @@ function clearStory() {
 
 </script>
 </html>
-
