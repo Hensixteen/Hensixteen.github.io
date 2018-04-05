@@ -23,7 +23,9 @@
 <center>
 <button onclick="clearStory()">Clear Story</button>
 </center>
-<p hidden id="lastThingTyped">
+<p hidden id="lastPerson">
+</p>
+<p hidden id="userId">
 </p>
 <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
 <script>
@@ -40,14 +42,20 @@
 
 var database = firebase.database();
 var ref = firebase.database().ref('story');
+document.getElementById("userId").innerHTML = Math.floor(Math.random() * 100000000001);
 
 readStory();
+readLastPerson();
 
 function updateStory() {
   
-  var lastThingTyped = document.getElementById("lastThingTyped").innerHTML;
+  var lastPerson = document.getElementById("lastPerson").innerHTML;
+  var userId = document.getElementById("userId").innerHTML;
   var addToStory;
   var oldStory = document.getElementById("story").innerHTML;
+  
+  console.log("User: " + userId);
+  console.log("Last User: " + lastPerson);
   
   var word1 = document.getElementById('word1').value;
 	var word2 = document.getElementById('word2').value;
@@ -73,8 +81,8 @@ function updateStory() {
   	alert("No words longer than 15 characters!");
   }
   
-  else if(oldStory.endsWith(lastThingTyped)) {
-  	alert("Wait your turn!")
+  else if(lastPerson == userId) {
+  	alert("One person at a time!");
   }
   
   else {
@@ -83,41 +91,62 @@ function updateStory() {
 		var word2 = word2 + " ";
 		var word3 = word3 + " ";
     addToStory = word1+word2+word3;
-  
-  	document.getElementById("lastThingTyped").innerHTML = addToStory;
 
     document.getElementById("word1").value = "";
     document.getElementById("word2").value = "";
     document.getElementById("word3").value = "";
     
     writeStory(addToStory, oldStory);
+    writeLastPerson(userId);
 
     readStory();
     
   }
 }
 
+function writeLastPerson(userId) {
+	firebase.database().ref('lastPerson').set({
+  	last:userId
+  });
+}
+
+function readLastPerson() {
+
+	var ref = firebase.database().ref('lastPerson/last');
+	var lastPerson;
+  
+  ref.on("value", function(snapshot) {
+  	lastPerson = snapshot.val();
+    document.getElementById("lastPerson").innerHTML = lastPerson;
+  });
+  
+}
+
 function writeStory(addToStory, oldStory) {
-  firebase.database().ref().set({
+  firebase.database().ref('storyTab').set({
 		story:oldStory+addToStory
   });
 }
 
 function readStory(){
   
+  var ref = firebase.database().ref('storyTab/story');
   var pleaseWork;
   
-		ref.on("value", function(snapshot) {
- 	  	pleaseWork = snapshot.val();
-      document.getElementById("story").innerHTML = pleaseWork;
-		});  
+	ref.on("value", function(snapshot) {
+ 	  pleaseWork = snapshot.val();
+    document.getElementById("story").innerHTML = pleaseWork;
+	});  
+
 }
 
 function clearStory() {
 	var nothin = "";
-  document.getElementById("lastThingTyped").innerHTML = "";
 	firebase.database().ref().set({
 		story: nothin
+  });
+  firebase.database().ref().set({
+		last: nothin
   });
 
 }
